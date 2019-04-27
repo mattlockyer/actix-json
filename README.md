@@ -1,4 +1,4 @@
-# Actix Web - JSON Async Service Boilerplate
+# Actix Web - Async JSON Service Boilerplate
 
 ## Motivation
 Learning Rust can be difficult. Providing an idiomatic example of a purely JSON based, asynchronous service. Hope it helps more projects get started.
