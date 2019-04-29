@@ -11,6 +11,12 @@ use routes::{
   not_found, get_test, post_test,
 };
 
+//mocks
+mod mocks;
+use mocks::{
+  data_test,
+};
+
 //custom middleware
 mod middleware;
 use middleware::{
@@ -27,9 +33,11 @@ fn main() -> io::Result<()> {
       .wrap(Cors::new()) 
       .wrap(Logger::default())
       .wrap(Hello)
-      // json handlers
-      .service(web::resource("/gettest").route(web::get().to_async(get_test)))
-      .service(web::resource("/posttest").route(web::post().to_async(post_test)))
+      // get json tests
+      .service(web::resource("/get_test").route(web::get().to_async(get_test)))
+      .service(web::resource("/data_test").route(web::get().to_async(data_test)))
+      // post json tests
+      .service(web::resource("/post_test").route(web::post().to_async(post_test)))
       // redirect
       .service(web::resource("/").route(web::get().to(|req: HttpRequest| {
         println!("{:?}", req);
