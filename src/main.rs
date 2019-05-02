@@ -5,6 +5,9 @@ use actix_web::{
   error, guard, web, App, HttpRequest, HttpResponse, HttpServer,
 };
 
+//util
+mod util;
+
 //routes
 mod routes;
 use routes::{
@@ -14,7 +17,8 @@ use routes::{
 //mocks
 mod mocks;
 use mocks::{
-  data_test,
+  mock_get,
+  mock_set,
 };
 
 //custom middleware
@@ -34,9 +38,10 @@ fn main() -> io::Result<()> {
       .wrap(Logger::default())
       .wrap(Hello)
       // get json tests
+      .service(web::resource("/mock_get/{filename}").route(web::get().to_async(mock_get)))
       .service(web::resource("/get_test").route(web::get().to_async(get_test)))
-      .service(web::resource("/data_test").route(web::get().to_async(data_test)))
       // post json tests
+      .service(web::resource("/mock_set/{filename}").route(web::post().to_async(mock_set)))
       .service(web::resource("/post_test").route(web::post().to_async(post_test)))
       // redirect
       .service(web::resource("/").route(web::get().to(|req: HttpRequest| {
