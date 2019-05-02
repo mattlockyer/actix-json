@@ -1,31 +1,24 @@
 use std::{env, io};
 use actix_web::{
-  http::{header, StatusCode},
-  middleware::{Logger, cors::{Cors}},
-  error, guard, web, App, HttpRequest, HttpResponse, HttpServer,
+  App, HttpRequest, HttpServer,
+  guard, web, middleware::{Logger, cors::{Cors}},
 };
 
 //util
 mod util;
+use util::{json_res_msg};
 
 //routes
 mod routes;
-use routes::{
-  not_found, get_test, post_test,
-};
+use routes::{redirect, get_test, post_test,};
 
 //mocks
 mod mocks;
-use mocks::{
-  mock_get,
-  mock_set,
-};
+use mocks::{mock_get, mock_set,};
 
 //custom middleware
 mod middleware;
-use middleware::{
-  Hello,
-};
+use middleware::{Hello,};
 
 fn main() -> io::Result<()> {
   env::set_var("RUST_LOG", "actix_web=debug");
@@ -45,27 +38,15 @@ fn main() -> io::Result<()> {
       .service(web::resource("/post_test").route(web::post().to_async(post_test)))
       // redirect
       .service(web::resource("/").route(web::get().to(|req: HttpRequest| {
-        println!("{:?}", req);
-        HttpResponse::Found()
-          .header(header::LOCATION, "gettest")
-          .finish()
+        redirect(req, "get_test")
       })))
-      // server error endpoint
-      .service(web::resource("/error").to(|| {
-        error::InternalError::new(
-          io::Error::new(io::ErrorKind::Other, "test"),
-          StatusCode::INTERNAL_SERVER_ERROR,
-        )
-      }))
-      // default 404 for get and protected for all other
+      // error endpoint
+      .service(web::resource("/error").to(|| {json_res_msg(500, false, "Server Error")}))
+      // default 404 and forbidden
       .default_service(
         web::resource("")
-          .route(web::get().to_async(not_found))
-          .route(
-            web::route()
-              .guard(guard::Not(guard::Get()))
-              .to(|| HttpResponse::MethodNotAllowed()),
-          ),
+          .route(web::get().to(|| {json_res_msg(404, false, "Not Found")}))
+          .route(web::route().guard(guard::Not(guard::Get())).to(|| {json_res_msg(403, false, "Forbidden")})),
       )
   })
   .bind("127.0.0.1:8080")?
