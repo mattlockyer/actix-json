@@ -6,11 +6,15 @@ use actix_web::{
 
 //util
 mod util;
-use util::{json_res_msg};
+use util::{
+  json_funcs::{
+    {json_res, json_res_msg},
+  },
+};
 
 //routes
 mod routes;
-use routes::{redirect, get_test, post_test,};
+use routes::{redirect, get_test, post_test};
 
 //mocks
 mod mocks;

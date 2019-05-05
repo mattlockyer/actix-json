@@ -4,7 +4,7 @@ use futures::{Future, future::{ok}};
 use serde_json::{from_reader, Value as JSON, error};
 
 // util mod is a sibling module
-use super::util::{json_res, json_res_msg};
+use super::{json_res, json_res_msg};
 
 pub fn mock_get(filename: Path<String>) -> impl Future<Item = HttpResponse, Error = Error> {
   //println!("path {:?}", filename.unwrap());
