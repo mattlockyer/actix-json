@@ -1,7 +1,7 @@
 use actix_web::{ HttpResponse };
 use serde_json::{json, Value as JSON};
 
-pub fn json_res_msg(num:u16, success:bool, message:&str) -> HttpResponse {
+pub fn json_msg(num:u16, success:bool, message:&str) -> HttpResponse {
   return json_res(num, json!({
     "success": success,
     "message": message

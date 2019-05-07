@@ -8,7 +8,7 @@ use actix_web::{
 mod util;
 use util::{
   json_funcs::{
-    {json_res, json_res_msg},
+    {json_res, json_msg},
   },
 };
 
@@ -45,12 +45,12 @@ fn main() -> io::Result<()> {
         redirect(req, "get_test")
       })))
       // error endpoint
-      .service(web::resource("/error").to(|| {json_res_msg(500, false, "Server Error")}))
+      .service(web::resource("/error").to(|| {json_msg(500, false, "Server Error")}))
       // default 404 and forbidden
       .default_service(
         web::resource("")
-          .route(web::get().to(|| {json_res_msg(404, false, "Not Found")}))
-          .route(web::route().guard(guard::Not(guard::Get())).to(|| {json_res_msg(403, false, "Forbidden")})),
+          .route(web::get().to(|| {json_msg(404, false, "Not Found")}))
+          .route(web::route().guard(guard::Not(guard::Get())).to(|| {json_msg(403, false, "Forbidden")})),
       )
   })
   .bind("127.0.0.1:8080")?
