@@ -22,7 +22,7 @@ future_ok!(
       },
     }))
   },
-  body, Json<JSON>
+  body:Json<JSON>
 );
 
 //redirect

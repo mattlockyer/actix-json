@@ -13,18 +13,16 @@ future_ok!(
     //println!("path {:?}", filename.unwrap());
     let file = File::open(format!("{}{}", "mock/", filename));
     //println!("file {:?}", file);
-    if file.is_ok() {
-      let data:Result<JSON, error::Error> = from_reader(&file.unwrap());
-      if data.is_ok() {
-        json_res(200, data.unwrap())
-      } else {
-        json_msg(500, false, "no data found in file")
-      }
-    } else {
-      json_msg(500, false, "file not found")
+    if !file.is_ok() {
+      return json_msg(500, false, "file not found");
     }
+    let data:Result<JSON, error::Error> = from_reader(&file.unwrap());
+    if !data.is_ok() {
+      return json_msg(500, false, "no data found in file");
+    }
+    json_res(200, data.unwrap())
   },
-  filename, Path<String>
+  filename:Path<String>
 );
 
 future_ok!(
@@ -34,17 +32,15 @@ future_ok!(
     let file = File::create(format!("{}{}", "mock/", filename));
     //println!("file {:?}", file);
     if file.is_ok() {
-      let result = file.unwrap().write_all(body.to_string().as_bytes());
-      if result.is_ok() {
-        json_msg(200, true, "file written")
-      } else {
-        json_msg(500, false, "error writing file")
-      }
-    } else {
-      json_msg(500, false, "error creating file")
+      return json_msg(500, false, "error creating file");
     }
+    let result = file.unwrap().write_all(body.to_string().as_bytes());
+    if !result.is_ok() {
+      return json_msg(500, false, "error writing file");
+    }
+    json_msg(200, true, "file written")
   },
-  filename, Path<String>, body, Json<JSON>
+  filename:Path<String>, body:Json<JSON>
 );
 
 // pub fn mock_set(filename: Path<String>, body: Json<JSON>) -> impl Future<Item = HttpResponse, Error = Error> {
