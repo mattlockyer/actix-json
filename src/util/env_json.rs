@@ -1,3 +1,17 @@
+/********************************
+
+Create a file in root (not src)
+
+// env.json
+{
+  "postgres":{
+    "username": "xxxxx",
+    "password": "xxxxx"
+  }
+}
+
+********************************/
+
 use serde_derive::{Deserialize, Serialize};
 use serde_json::{ from_value, };
 use crate::{json_open};
