@@ -12,9 +12,7 @@ use diesel::{
   pg::PgConnection, 
 };
 // this crate
-use crate::{json_res, json_msg, future_ok, sql_struct};
-//get connection pool from module above
-use super::{Pool};
+use crate::{Pool, json_res, json_msg, future_ok, sql_struct};
 /********************************
 Struct for table test.item, QueryableByName for raw SQL, use sql_type for each field
 ********************************/

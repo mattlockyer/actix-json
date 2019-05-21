@@ -5,7 +5,7 @@ use serde_json::{Value as JSON};
 
 use crate::future_ok;
 // util mod is a sibling module
-use super::{json_res, json_msg, json_open};
+use crate::{json_res, json_msg, json_open};
 
 future_ok!(
   mock_get,

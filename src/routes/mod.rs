@@ -1,32 +1,13 @@
 
-use actix_web::{
-  HttpRequest, HttpResponse, Error, 
-  http::{header}, web::{Json},
-};
-use futures::{future::{ok}, Future};
-use serde_json::{json, Value as JSON};
+pub mod static_examples;
+pub use static_examples::get_test;
+pub use static_examples::post_test;
+pub use static_examples::redirect;
 
-use crate::future_ok;
-use super::{json_res, json_msg};
+pub mod fs_examples;
+pub use fs_examples::mock_get;
+pub use fs_examples::mock_set;
 
-future_ok!(get_test, { json_msg(200, true, "get_test") });
-
-future_ok!(
-  post_test,
-  {
-    json_res(200, json!({
-      "success": true,
-      "body": {
-        "type": "json",
-        "payload": JSON::as_object(&body),
-      },
-    }))
-  },
-  body:Json<JSON>
-);
-
-//redirect
-pub fn redirect(req:HttpRequest, to:&str) -> HttpResponse {
-  println!("{:?} redirected to {}", req, to);
-  HttpResponse::Found().header(header::LOCATION, to).finish()
-}
+pub mod db_examples;
+pub use db_examples::db_get;
+pub use db_examples::db_set;

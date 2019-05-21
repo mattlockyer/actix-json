@@ -1,37 +1,29 @@
-
 #[macro_use] extern crate diesel;
-
 use std::{env, io};
 use actix_web::{
   App, HttpRequest, HttpServer,
   guard, web, middleware::{Logger, cors::{Cors}},
 };
-
+//custom middleware
+// mod middleware;
+// use middleware::{Hello,};
 // env and util
-mod env_json;
-use env_json::{Env};
 mod util;
 use util::{
+  env_json, env_json::{Env},
+  db_pool, db_pool::{Pool},
   json_funcs::{
     {json_res, json_msg, json_open},
   },
 };
 
-//custom middleware
-mod middleware;
-use middleware::{Hello,};
-
 //routes
 mod routes;
-use routes::{redirect, get_test, post_test};
-
-//mocks
-mod mocks;
-use mocks::{mock_get, mock_set,};
-
-//postgres
-mod db;
-use db::{db_get, db_set};
+use routes::{
+  redirect, get_test, post_test,
+  mock_get, mock_set,
+  db_get, db_set
+};
 
 fn main() -> io::Result<()> {
   env::set_var("RUST_LOG", "actix_web=debug");
@@ -40,14 +32,14 @@ fn main() -> io::Result<()> {
   //load the env vars in env.json
   let env:Env = env_json::init();
   // variables that need to be owned by enclosure
-  let pool = db::init(env);
+  let pool = db_pool::init(env);
   // build the server - move forces closure to own variables from env (above) e.g. pool
   HttpServer::new(move || {
     App::new()
       .data(pool.clone())
       .wrap(Cors::new()) 
       .wrap(Logger::default())
-      .wrap(Hello)
+      //.wrap(Hello)
       // get json tests
       .service(web::resource("/mock_get/{filename}").route(web::get().to_async(mock_get)))
       .service(web::resource("/get_test").route(web::get().to_async(get_test)))
