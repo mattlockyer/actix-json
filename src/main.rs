@@ -12,6 +12,7 @@ mod util;
 use util::{
   env_json, env_json::{Env},
   db_pool, db_pool::{Pool},
+  mailgun, mailgun::{Mailgun},
   json_funcs::{
     {json_res, json_msg, json_open},
   },
@@ -21,8 +22,10 @@ use util::{
 mod routes;
 use routes::{
   redirect, get_test, post_test,
+  proxy_test, proxy_streaming,
   mock_get, mock_set,
-  db_get, db_set
+  db_get, db_set,
+  mail_test,
 };
 
 fn main() -> io::Result<()> {
@@ -32,18 +35,24 @@ fn main() -> io::Result<()> {
   //load the env vars in env.json
   let env:Env = env_json::init();
   // variables that need to be owned by enclosure
-  let pool = db_pool::init(env);
+  let pool = db_pool::init(env.postgres.username, env.postgres.password);
+  let mailgun = mailgun::init(env.mailgun.domain, env.mailgun.apikey);
+  
   // build the server - move forces closure to own variables from env (above) e.g. pool
   HttpServer::new(move || {
     App::new()
       .data(pool.clone())
+      .data(mailgun.clone())
       .wrap(Cors::new()) 
       .wrap(Logger::default())
       //.wrap(Hello)
       // get json tests
       .service(web::resource("/mock_get/{filename}").route(web::get().to_async(mock_get)))
       .service(web::resource("/get_test").route(web::get().to_async(get_test)))
+      .service(web::resource("/proxy_test").route(web::get().to_async(proxy_test)))
+      .service(web::resource("/proxy_streaming/{url}").route(web::get().to_async(proxy_streaming)))
       .service(web::resource("/db_get").route(web::get().to_async(db_get)))
+      .service(web::resource("/mail_test").route(web::get().to_async(mail_test)))
       // post json tests
       .service(web::resource("/mock_set/{filename}").route(web::post().to_async(mock_set)))
       .service(web::resource("/post_test").route(web::post().to_async(post_test)))

@@ -2,6 +2,29 @@
 use actix_web::{HttpResponse, Error};
 #[allow(unused_imports)]
 use futures::{future::{ok}, Future};
+
+
+
+#[macro_export]
+macro_rules! fres {
+  () => (
+    impl Future<Item = HttpResponse, Error = Error>
+  );
+}
+
+
+/********************************
+gen a public function that returns future::ok, but matches actix to_async type req.
+params: $name, $code (executed as closure), multiple $arg:$type
+********************************/
+#[macro_export]
+macro_rules! future {
+  ($name:ident, $code:expr $(, $arg:ident:$type:ty)*) => (
+    pub fn $name($($arg:$type),*) -> impl Future<Item = HttpResponse, Error = Error> {
+      (||$code)()
+    }
+  );
+}
 /********************************
 gen a public function that returns future::ok, but matches actix to_async type req.
 params: $name, $code (executed as closure), multiple $arg:$type
