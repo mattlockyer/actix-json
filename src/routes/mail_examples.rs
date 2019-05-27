@@ -1,29 +1,15 @@
 
 use actix_web::{ 
-  web::{ Data, Json, },
+  web::{ Data },
   HttpResponse, Error 
 };
-use futures::{future::{ok}, Future};
-//use serde_json::{json, Value as JSON};
+use futures::{Future};
 
-use crate::{Mailgun, fres, json_msg};
+use crate::{Mailgun, fres};
 
 pub fn mail_test(mailgun:Data<Mailgun>) -> fres!() {
 
-  mailgun.test()
+  mailgun.test("mattdlockyer@gmail.com".to_string(), "TESTING".to_string(), "TEST".to_string())
   //Ok(HttpResponse::Ok().streaming())
 
 }
-
-//test route
-//future_ok!(mail_test, { json_msg(200, true, "mail_test") });
-// future_ok!(
-//   mail_test,
-//   {
-//     mailgun.test();
-//     let two = time::Duration::from_millis(2000);
-//     thread::sleep(two);
-//     json_msg(200, true, "mail_test")
-//   },
-//   mailgun:Data<Mailgun>
-// );

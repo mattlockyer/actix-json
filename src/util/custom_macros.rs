@@ -2,17 +2,16 @@
 use actix_web::{HttpResponse, Error};
 #[allow(unused_imports)]
 use futures::{future::{ok}, Future};
-
-
-
+/********************************
+This may be the only macro needed for cleaning up handlers
+TODO consider rewriting handlers
+********************************/
 #[macro_export]
 macro_rules! fres {
   () => (
     impl Future<Item = HttpResponse, Error = Error>
   );
 }
-
-
 /********************************
 gen a public function that returns future, but matches actix to_async type req.
 params: $name, $code (executed as closure), multiple $arg:$type
