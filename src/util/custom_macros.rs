@@ -14,7 +14,7 @@ macro_rules! fres {
 
 
 /********************************
-gen a public function that returns future::ok, but matches actix to_async type req.
+gen a public function that returns future, but matches actix to_async type req.
 params: $name, $code (executed as closure), multiple $arg:$type
 ********************************/
 #[macro_export]
