@@ -8,30 +8,29 @@ use crate::{fres};
 
 #[derive(Clone)]
 pub struct Mailgun {
-  client: Client,
   domain: String,
   apikey: String,
 }
 
 #[derive(Serialize)]
 struct MailGunData {
-    from: String,
-    to: String,
-    subject: String,
-    text: String,
+  from: String,
+  to: String,
+  subject: String,
+  text: String,
 }
 
-unsafe impl Send for Mailgun {}
-
 impl Mailgun {
-  pub fn test(&self, to:String, subject:String, text:String) -> fres!() {
+
+  pub fn send(&self, to:String, subject:String, text:String) -> fres!() {
     let data = MailGunData{
       from: String::from(format!("Test <test@{}>", self.domain)),
       to,
       subject,
       text,
     };
-    self.client
+    
+    Client::default()
       .post(format!("https://api.mailgun.net/v3/{}/messages", self.domain))
       .basic_auth("api", Some(&self.apikey))
       .send_form(&data)
@@ -51,7 +50,6 @@ impl Mailgun {
 
 pub fn init(domain: String, apikey: String) -> Mailgun {
   let mailgun = Mailgun {
-    client: Client::new(),
     domain: domain.clone(),
     apikey: apikey.clone(),
   };

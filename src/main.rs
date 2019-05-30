@@ -2,6 +2,7 @@
 use std::{env, io};
 use actix_web::{
   App, HttpRequest, HttpServer,
+  client::Client,
   guard, web, middleware::{Logger, cors::{Cors}},
 };
 
@@ -9,7 +10,6 @@ use actix_web::{
 // use std::io::BufReader;
 // use rustls::internal::pemfile::{certs, rsa_private_keys};
 // use rustls::{NoClientAuth, ServerConfig};
-
 
 //custom middleware
 // mod middleware;
@@ -32,7 +32,7 @@ use routes::{
   proxy_test, proxy_streaming,
   mock_get, mock_set,
   db_get, db_set,
-  mail_test,
+  mail_test, api_test,
 };
 
 fn main() -> io::Result<()> {
@@ -58,6 +58,7 @@ fn main() -> io::Result<()> {
     App::new()
       .data(pool.clone())
       .data(mailgun.clone())
+      .data(Client::default())
       .wrap(Cors::new()) 
       .wrap(Logger::default())
       //.wrap(Hello)
@@ -68,6 +69,7 @@ fn main() -> io::Result<()> {
       .service(web::resource("/proxy_streaming/{url}").route(web::get().to_async(proxy_streaming)))
       .service(web::resource("/db_get").route(web::get().to_async(db_get)))
       .service(web::resource("/mail_test").route(web::get().to_async(mail_test)))
+      .service(web::resource("/api_test").route(web::get().to_async(api_test)))
       // post json tests
       .service(web::resource("/mock_set/{filename}").route(web::post().to_async(mock_set)))
       .service(web::resource("/post_test").route(web::post().to_async(post_test)))

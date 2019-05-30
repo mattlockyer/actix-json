@@ -1,4 +1,8 @@
 
+
+pub mod tests;
+pub use tests::api_test;
+
 pub mod static_examples;
 pub use static_examples::get_test;
 pub use static_examples::post_test;
