@@ -19,9 +19,10 @@ pub fn json_body(body:&Bytes) -> JSON {
 /********************************
 Helpers -> HttpResponse
 ********************************/
-pub fn json_ok(message:&str) -> HttpResponse {
-  json_msg(200, true, message)
-}
+// pub fn json_ok(message:&str) -> HttpResponse {
+//   json_msg(200, true, message)
+// }
+
 pub fn json_msg(num:u16, success:bool, message:&str) -> HttpResponse {
   json_res(num, json_msg_raw(success, message))
 }

@@ -5,11 +5,10 @@ use actix_web::{
   web::{ Data, Query,},
   HttpResponse, Error
 };
-use futures::{Future, future::{ok}};
-
-use crate::{fres, json_ok};
+use futures::{Future};
 use serde_derive::{Deserialize};
 use serde_json::{from_slice, Value as JSON};
+use crate::{fres};
 
 #[derive(Debug, Deserialize)]
 pub struct Info {

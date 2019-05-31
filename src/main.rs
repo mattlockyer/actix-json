@@ -21,13 +21,13 @@ use util::{
   db_pool, db_pool::{Pool},
   mailgun, mailgun::{Mailgun},
   json_funcs::{
-    {json_res, json_ok, json_msg, json_open, json_body},
+    {json_res, json_msg, json_open, json_body},
   },
 };
 
 //routes
-mod routes;
-use routes::{
+mod examples;
+use examples::{
   redirect, get_test, post_test,
   proxy_test, proxy_streaming,
   mock_get, mock_set,
