@@ -21,7 +21,7 @@ use util::{
   db_pool, db_pool::{Pool},
   mailgun, mailgun::{Mailgun},
   json_funcs::{
-    {json_res, json_msg, json_open},
+    {json_res, json_ok, json_msg, json_open, json_body},
   },
 };
 
@@ -44,7 +44,7 @@ fn main() -> io::Result<()> {
   // variables that need to be owned by enclosure
   let pool = db_pool::init(env.postgres.username, env.postgres.password);
   let mailgun = mailgun::init(env.mailgun.domain, env.mailgun.apikey);
-
+  
   // // load ssl keys
   // let mut config = ServerConfig::new(NoClientAuth::new());
   // let cert_file = &mut BufReader::new(File::open("cert.pem").unwrap());
@@ -66,7 +66,7 @@ fn main() -> io::Result<()> {
       .service(web::resource("/mock_get/{filename}").route(web::get().to_async(mock_get)))
       .service(web::resource("/get_test").route(web::get().to_async(get_test)))
       .service(web::resource("/proxy_test").route(web::get().to_async(proxy_test)))
-      .service(web::resource("/proxy_streaming/{url}").route(web::get().to_async(proxy_streaming)))
+      .service(web::resource("/proxy_streaming").route(web::get().to_async(proxy_streaming)))
       .service(web::resource("/db_get").route(web::get().to_async(db_get)))
       .service(web::resource("/mail_test").route(web::get().to_async(mail_test)))
       .service(web::resource("/api_test").route(web::get().to_async(api_test)))

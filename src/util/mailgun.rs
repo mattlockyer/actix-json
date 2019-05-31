@@ -3,8 +3,7 @@ use actix_web::client::Client;
 use actix_web::{HttpResponse, Error};
 use futures::{Future};
 use serde_derive::{Serialize};
-use serde_json::{from_slice, Value as JSON};
-use crate::{fres};
+use crate::{fres, json_body};
 
 #[derive(Clone)]
 pub struct Mailgun {
@@ -39,10 +38,7 @@ impl Mailgun {
         res.body()
         .map_err(Error::from)
         .and_then(|body| {
-          println!("===== RESPONSE BODY =====");
-          println!("{:?}", body);
-          let json:JSON = from_slice(&body).unwrap();
-          Ok(HttpResponse::Ok().json(json))
+          Ok(HttpResponse::Ok().json(json_body(&body)))
         })
       })
   }

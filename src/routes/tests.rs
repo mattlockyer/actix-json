@@ -5,9 +5,10 @@ use actix_web::{
 };
 use futures::{Future};
 use serde_derive::{Serialize};
-use serde_json::{from_slice, Value as JSON};
+use serde_json::{Value as JSON};
+//use serde_json::{from_slice, Value as JSON};
 
-use crate::{fres};
+use crate::{fres, json_body};
 
 /********************************
 Testing memory stuff
@@ -58,7 +59,10 @@ pub fn api_test(client:Data<Client>) -> fres!() {
         // };
 
         // note the ? this will handle the error instead of ugly match syntax
-        let json:JSON = from_slice(&body)?;
+        //let json:JSON = from_slice(&body)?;
+        
+        //this will catch the error and wrap it as a json object to send to client
+        let json:JSON = json_body(&body);
 
         Ok(HttpResponse::Ok().json(json))
       })

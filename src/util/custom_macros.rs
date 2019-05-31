@@ -3,37 +3,12 @@ use actix_web::{HttpResponse, Error};
 #[allow(unused_imports)]
 use futures::{future::{ok}, Future};
 /********************************
-This may be the only macro needed for cleaning up handlers
-TODO consider rewriting handlers
+Shorten a common return type for async actix request handlers
 ********************************/
 #[macro_export]
 macro_rules! fres {
   () => (
     impl Future<Item = HttpResponse, Error = Error>
-  );
-}
-/********************************
-gen a public function that returns future, but matches actix to_async type req.
-params: $name, $code (executed as closure), multiple $arg:$type
-********************************/
-#[macro_export]
-macro_rules! future {
-  ($name:ident, $code:expr $(, $arg:ident:$type:ty)*) => (
-    pub fn $name($($arg:$type),*) -> impl Future<Item = HttpResponse, Error = Error> {
-      (||$code)()
-    }
-  );
-}
-/********************************
-gen a public function that returns future::ok, but matches actix to_async type req.
-params: $name, $code (executed as closure), multiple $arg:$type
-********************************/
-#[macro_export]
-macro_rules! future_ok {
-  ($name:ident, $code:expr $(, $arg:ident:$type:ty)*) => (
-    pub fn $name($($arg:$type),*) -> impl Future<Item = HttpResponse, Error = Error> {
-      ok((||$code)())
-    }
   );
 }
 /********************************
@@ -52,17 +27,31 @@ macro_rules! sql_struct {
     }
   );
 }
+
 /********************************
-gen a public struct
+Deprecated
 ********************************/
-#[macro_export]
-macro_rules! struct_test {
-  ($name:ident $(, $arg:ident:$type:ty)*) => (
-    #[derive(Debug)]
-    struct $name {  
-      $(
-        $arg:$type,
-      )*
-    }
-  );
-}
+// /********************************
+// gen a public function that returns future, but matches actix to_async type req.
+// params: $name, $code (executed as closure), multiple $arg:$type
+// ********************************/
+// #[macro_export]
+// macro_rules! future {
+//   ($name:ident, $code:expr $(, $arg:ident:$type:ty)*) => (
+//     pub fn $name($($arg:$type),*) -> impl Future<Item = HttpResponse, Error = Error> {
+//       (||$code)()
+//     }
+//   );
+// }
+// /********************************
+// gen a public function that returns future::ok, but matches actix to_async type req.
+// params: $name, $code (executed as closure), multiple $arg:$type
+// ********************************/
+// #[macro_export]
+// macro_rules! future_ok {
+//   ($name:ident, $code:expr $(, $arg:ident:$type:ty)*) => (
+//     pub fn $name($($arg:$type),*) -> impl Future<Item = HttpResponse, Error = Error> {
+//       ok((||$code)())
+//     }
+//   );
+// }

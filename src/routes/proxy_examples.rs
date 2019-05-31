@@ -2,31 +2,33 @@
 
 use actix_web::{ 
   client::Client,
-  web::{ Data },
-  web::{Path}, HttpResponse, Error
+  web::{ Data, Query,},
+  HttpResponse, Error
 };
-use futures::{Future};
+use futures::{Future, future::{ok}};
 
-use crate::{future, fres};
+use crate::{fres, json_ok};
+use serde_derive::{Deserialize};
 use serde_json::{from_slice, Value as JSON};
 
+#[derive(Debug, Deserialize)]
+pub struct Info {
+  url: String,
+}
 /********************************
 Incomplete, should take ? get param to use URLs
 ********************************/
-future!(proxy_streaming,
-  {
-    let client:Client = Client::new();
-    client
-      .get(&format!("http://{}", url))
-      .header("User-Agent", "Actix-web")
-      .send()
-      .map_err(Error::from)
-      .and_then(|res| {
-        Ok(HttpResponse::Ok().streaming(res))
-      })
-  },
-  url:Path<String>
-);
+pub fn proxy_streaming(info: Query<Info>, client:Data<Client>) -> fres!() {
+  println!("{:?}", info);
+  client
+    .get(&info.url)
+    .header("User-Agent", "Actix-web")
+    .send()
+    .map_err(Error::from)
+    .and_then(|res| {
+      Ok(HttpResponse::Ok().streaming(res))
+    })
+}
 
 /********************************
 Working
@@ -34,7 +36,7 @@ Working
 
 pub fn proxy_test(client:Data<Client>) -> fres!() {
   client
-    .get("http://localhost:8080/get_testt")
+    .get("http://localhost:8080/get_test")
     .header("User-Agent", "Actix-web")
     .send()
     .map_err(Error::from)

@@ -2,12 +2,26 @@
 // use serde_json::{json, Value as JSON};
 
 use std::{fs::File};
+use bytes::Bytes;
 use actix_web::{ HttpResponse };
-use serde_json::{json, from_reader, Value as JSON, error};
+use serde_json::{json, from_reader, from_slice, Value as JSON, error};
 
+
+/********************************
+Handling responses
+********************************/
+pub fn json_body(body:&Bytes) -> JSON {
+  match from_slice(body) {
+    Err(why) => json_msg_raw(false, &format!("{:?}", why)),
+    Ok(json) => json,
+  }
+}
 /********************************
 Helpers -> HttpResponse
 ********************************/
+pub fn json_ok(message:&str) -> HttpResponse {
+  json_msg(200, true, message)
+}
 pub fn json_msg(num:u16, success:bool, message:&str) -> HttpResponse {
   json_res(num, json_msg_raw(success, message))
 }
@@ -40,8 +54,10 @@ pub fn json_open(path: &str) -> JSON {
   }
   data.unwrap()
 }
-
-pub fn json_msg_raw(success:bool, message:&str) -> JSON {
+/********************************
+Internal
+********************************/
+fn json_msg_raw(success:bool, message:&str) -> JSON {
   json!({
     "success": success,
     "message": message
